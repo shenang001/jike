@@ -1,12 +1,18 @@
 import './index.scss'
-import { Card, Form, Input, Button } from 'antd'
+import { Card, Form, Input, Button, message } from 'antd'
 import logo from '@/assets/logo.png'
-
+import { useDispatch } from 'react-redux'
+import { fetchLogin } from '@/store/moudles/user'
+import { useNavigate } from 'react-router-dom'
 
 const Login =()=>{
-
-  const onFinish = (formValue) => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const onFinish = async(formValue) => {
     console.log(formValue)
+    await dispatch(fetchLogin(formValue))
+    navigate('/')
+    message.success('登录成功')
   }
 return(
     <div className="login">
@@ -26,11 +32,11 @@ return(
         >
           <Input size="large" placeholder="请输入手机号" />
         </Form.Item>
-        <Form.Item name="password"
+        <Form.Item name="code"
         rules={[
           { required: true, message: '请输入密码' },
         ]}>
-          <Input.Password size="large" placeholder="请输入密码" />
+          <Input.Password size="large" placeholder="请输入密码246810" />
           
         </Form.Item>
         <Form.Item>
