@@ -4,9 +4,6 @@ import { getToken } from "@/utils";
 export function AuthRoute ({ children }) {
     const token = getToken()
     return token ? children : <Navigate to={"/login"} replace />;  
-    // if (token) {
-    //   return <>{children}</>
-    // } else {
-    //   return <Navigate to={'/login'} replace />
-    // }
+    
   }
+  
