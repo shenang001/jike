@@ -3,10 +3,16 @@ import Layout from "@/pages/Layout";
 import Login from "@/pages/Login";
 import Demo from "@/pages/Demo";
 import { createBrowserRouter } from "react-router-dom";
+import {AuthRoute} from '@/components/AuthRoute'
+
 const router = createBrowserRouter([
     {
         path:"/",
-        element:<Layout/>
+        element:(<AuthRoute>
+             <Layout>
+          
+            </Layout>  
+            </AuthRoute>)
     },
     {
         path:"/login",
