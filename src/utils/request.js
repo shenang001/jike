@@ -10,7 +10,7 @@ const request = axios.create({
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }else{
-      console.log('为啥呢',token)
+      console.log('为啥没token',token)
     }
     return config
   },(error) =>{
