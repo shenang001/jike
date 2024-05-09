@@ -8,8 +8,9 @@ import {
 import './index.scss'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
-import { fetchUserInfo } from '@/store/moudles/user'
+import { clearUserInfo, fetchUserInfo } from '@/store/moudles/user'
 import { useDispatch, useSelector } from 'react-redux'
+
 
 const { Header, Sider } = Layout
 
@@ -42,11 +43,19 @@ const onMenuClick = (e)=>{
   console.log(path)
   navigate(path)
 }
+// 获取用户信息
 const dispatch = useDispatch()
 useEffect(()=>{
   dispatch(fetchUserInfo())
 },[dispatch])
+// 获取redux里用户名
 const loginName =  useSelector(state => state.user.userInfo.mobile)
+const onConfirm = ()=>{
+  dispatch(clearUserInfo())
+  navigate('/login')
+//   console.log('exit')
+
+}
   return (
     <Layout>
       <Header className="header">
@@ -54,7 +63,7 @@ const loginName =  useSelector(state => state.user.userInfo.mobile)
         <div className="user-info">
           <span className="user-name">{loginName}</span>
           <span className="user-logout">
-            <Popconfirm title="是否确认退出？" okText="退出" cancelText="取消">
+            <Popconfirm title="是否确认退出？" okText="退出" cancelText="取消" onConfirm={onConfirm}>
               <LogoutOutlined /> 退出
             </Popconfirm>
           </span>
