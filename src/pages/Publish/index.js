@@ -6,7 +6,7 @@ import {
   import './index.scss'
   import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { request } from '@/utils'  
+
 import { useEffect, useState } from 'react'
 import {createArticleApPI, getChannelAPI} from '@/apis/articles'
 
@@ -86,6 +86,7 @@ return (
     name='image'
     listType="picture-card"
     showUploadList
+    maxCount={imageType}
     action={'http://geek.itheima.net/v1_0/upload'}
     onChange={onUploadChange}
   >
