@@ -1,19 +1,29 @@
 import {
     Card, Breadcrumb,Form,Button,Radio,
-    Input,Upload,Space,Select} from 'antd'
-  import { PlusOutlined } from '@ant-design/icons'
-  import { Link } from 'react-router-dom'
-  import './index.scss'
-  import ReactQuill from 'react-quill'
+    Input,Upload,Space,Select,
+    message} from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
+import { Link } from 'react-router-dom'
+import './index.scss'
+import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-
 import { useEffect, useState } from 'react'
 import {createArticleApPI, getChannelAPI} from '@/apis/articles'
+import { useChannel } from '@/hooks /useChannels'
 
 const Publish = ()=>{
   const { Option } = Select
-  // 频道状态
-  const [channels,setChannels] = useState([])
+  // // 频道状态
+  // const [channels,setChannels] = useState([])
+  // // 发起获取频道请求
+  // useEffect(()=>{
+  //   const fetchChannels=async ()=>{
+  //      const res = await getChannelAPI()
+  //      setChannels(res.data.channels)
+  //     }
+  //     fetchChannels()
+  //   } ,[])
+  const {channels} =  useChannel()
   // 封面图片状态信息
   const [imageList, setImageList] = useState([])
   // 点击上传图片
@@ -21,30 +31,26 @@ const onUploadChange = (info) => {
     setImageList(info.fileList)
     console.log(info)
 }
-// 点击切换封面张数
+// 封面张数状态
 const [imageType,setImageType] = useState(0)
+// 点击切换封面张数
 const changeCover =(e)=>{
   console.log(e.target.value)
   setImageType(e.target.value)
 }
-// 发起获取频道请求
-  useEffect(()=>{
-  const fetchChannels=async ()=>{
-     const res = await getChannelAPI()
-     setChannels(res.data.channels)
-    }
-    fetchChannels()
-  } ,[])
+
   // 点击提交按钮
   const onFinish = (formValue)=>{
     console.log(formValue)
+    if(imageType !== imageList.length) return message.warning('请匹配封面数量信息')
     const {title,channel_id,content} = formValue
+  // 表单数据reqData
     const reqData = {
       title:title,
       content:content,
       cover:{
-        type:0,
-        images:[]
+        type:imageType, //封面模式1或0或3
+        images:imageList.map((item) => item.response.data.url) //得到图片路径
       },
       channel_id:channel_id
     }
@@ -82,6 +88,7 @@ return (
       <Radio value={0}>无图</Radio>
     </Radio.Group>
   </Form.Item>
+  {/* 通过imageType值来判断是否显示 */}
   {imageType > 0  &&  <Upload
     name='image'
     listType="picture-card"
@@ -115,6 +122,7 @@ return (
         name="content"
         rules={[{ required: true, message: '请输入文章内容' }]}
       >
+      {/* 富文本编辑器 */}
         <ReactQuill
           className="publish-quill"
           theme="snow"
