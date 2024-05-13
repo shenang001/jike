@@ -14,10 +14,11 @@ export function createArticleApPI(data){
     })
 }
 // 获取文章列表
-export function getArticleListAPI(data){
+// params 的对象{}参数名和值， axios 源码会把参数和值，拼接在 url? 后面给后台
+export function getArticleListAPI(params){
 return request({
     url:'/mp/articles',
     method:'GET',
-    data
+    params
 })
 }

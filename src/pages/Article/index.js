@@ -4,7 +4,6 @@ import { Card, Breadcrumb, Form, Button, Radio,
 import locale from 'antd/es/date-picker/locale/zh_CN'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import img404 from '@/assets/error.png'
-
 import {useChannel} from '@/hooks /useChannels'
 import { useEffect, useState } from 'react'
 import { getArticleListAPI } from '@/apis/articles'
@@ -74,28 +73,49 @@ const status = {
     }
   ]
 
-  // 1. 准备参数
+  //筛选功能 准备参数
+  // 筛选工作
   const [reqData, setReqData] = useState({
     status: '',
     channel_id: '',
     begin_pubdate: '',
     end_pubdate: '',
     page: 1,
-    per_page: 4
+    per_page: 10
   })
+// 获取文章列表
+const [list, setList] = useState([])
+const [count,setCount] = useState(0)
+useEffect(() => {
+  async function getList () {
+    const res = await getArticleListAPI(reqData)
+    // console.log('文章列表',res)
+    setList(res.data.results)
+    setCount(res.data.total_count)
+  }
+  getList()
+}, [reqData])
+// 点击筛选按钮 获取筛选数据
+  const onFinish=(formValue)=>{
+    console.log(formValue)
+    setReqData({
+      ...reqData,
+      channel_id:formValue.channel_id,
+      status:formValue.status,
+      begin_pubdate:formValue.date[0].format('YYYY-MM-DD'),
+      end_pubdate:formValue.date[1].format('YYYY-MM-DD'),
+    })
+  }
+  // 分页功能
+  const onPageChange=(page)=>{
+    console.log(page)
+    setReqData({
+      ...reqData,
+      page
+    })
+   
 
-  // 获取文章列表
-  const [list, setList] = useState([])
-  const [count,setCount] = useState(0)
-  useEffect(() => {
-    async function getList () {
-      const res = await getArticleListAPI(reqData)
-      console.log(res)
-      setList(res.data.results)
-      setCount(res.data.total_count)
-    }
-    getList()
-  }, [reqData])
+  }
   return (
     <div>
       <Card
@@ -107,7 +127,7 @@ const status = {
         }
         style={{ marginBottom: 20 }}
       >
-        <Form initialValues={{ status: '' }}>
+        <Form initialValues={{ status: '' }} onFinish={onFinish}>
           <Form.Item label="状态" name="status">
             <Radio.Group>
               <Radio value={''}>全部</Radio>
@@ -143,7 +163,11 @@ const status = {
       </Card>
       {/* 表格区域 */}
       <Card title={`根据筛选条件共查询到 ${count} 条结果：`}>
-        <Table rowKey="id" columns={columns} dataSource={list} />
+        <Table rowKey="id" columns={columns} dataSource={list} pagination={{
+          total: count,
+          pageSize: reqData.per_page,
+          onChange: onPageChange
+        }} />
       </Card>
     </div>
   )
