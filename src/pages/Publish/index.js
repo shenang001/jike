@@ -7,10 +7,11 @@ import { Link } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { useEffect, useState } from 'react'
-import {createArticleApPI, getChannelAPI} from '@/apis/articles'
+import {  useState } from 'react'
+import {createArticleApPI} from '@/apis/articles'
+// 引入自定义hook函数
 import { useChannel } from '@/hooks /useChannels'
-
+ 
 const Publish = ()=>{
   const { Option } = Select
   // // 频道状态
@@ -45,7 +46,7 @@ const changeCover =(e)=>{
     if(imageType !== imageList.length) return message.warning('请匹配封面数量信息')
     const {title,channel_id,content} = formValue
   // 表单数据reqData
-    const reqData = {
+    let reqData = {
       title:title,
       content:content,
       cover:{
@@ -55,6 +56,8 @@ const changeCover =(e)=>{
       channel_id:channel_id
     }
     createArticleApPI(reqData)
+    message.success('发布成功')
+    reqData ={}
   }
 return (
     <div className="publish">

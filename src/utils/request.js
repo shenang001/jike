@@ -27,9 +27,9 @@ return response.data
   if(error.response.status === 401){
     removeToken()
     router.navigate('/login')
-   
+    window.location.reload()
   }
-  window.location.reload()
+ 
     return Promise.reject(error)
 
 })
