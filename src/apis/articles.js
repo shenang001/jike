@@ -22,3 +22,10 @@ return request({
     params
 })
 }
+// 删除文章根据id
+export function deleteArticlesAPI(target){
+return request({
+    url:`/mp/articles/${target}`,
+    method:'DELETE'
+})
+}

@@ -1,23 +1,24 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Card, Breadcrumb, Form, Button, Radio,
-         DatePicker, Select,Table, Tag, Space } from 'antd'
+         DatePicker, Select,Table, Tag, Space,message,Popconfirm} from 'antd'
 import locale from 'antd/es/date-picker/locale/zh_CN'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import img404 from '@/assets/error.png'
 import {useChannel} from '@/hooks /useChannels'
 import { useEffect, useState } from 'react'
-import { getArticleListAPI } from '@/apis/articles'
+import { deleteArticlesAPI, getArticleListAPI } from '@/apis/articles'
 const { Option } = Select
 const { RangePicker } = DatePicker
 const Article = () => {
     // 自定义hook函数
  const {channels}= useChannel()
-
  //   通过枚举展示标签选项
 const status = {
     1:<Tag color="warning">待审核</Tag>,
     2:<Tag color="green">审核通过</Tag>
 }
+// 定义导航
+const navigate = useNavigate()
       // 准备列数据
   const columns = [
     {
@@ -60,18 +61,43 @@ const status = {
       render: data => {
         return (
           <Space size="middle">
-            <Button type="primary" shape="circle" icon={<EditOutlined />} />
+            <Button type="primary" shape="circle" icon={<EditOutlined />}
+             onClick={()=>navigate(`/publish?id=${data.id}`)}/>
+             {/* 气泡按钮 */}
+            <Popconfirm
+    title="删除文章"
+    description="铁子，确认要删除吗？"
+    onConfirm={()=>confirm(data)}
+    onCancel={cancel}
+    okText="我确认"
+    cancelText="不删了"
+  >
             <Button
               type="primary"
               danger
               shape="circle"
               icon={<DeleteOutlined />}
+             
             />
+            </Popconfirm>
           </Space>
         )
       }
     }
   ]
+  // 删除确认/取消按钮
+  const confirm =async ({id}) => {
+    console.log(id);
+ await deleteArticlesAPI(id)
+  setReqData({
+    ...reqData
+  })
+    message.success('删除成功');
+  };
+  const cancel = (e) => {
+    console.log(e);
+    message.error('取消删除');
+  };
 
   //筛选功能 准备参数
   // 筛选工作
@@ -113,8 +139,6 @@ useEffect(() => {
       ...reqData,
       page
     })
-   
-
   }
   return (
     <div>
