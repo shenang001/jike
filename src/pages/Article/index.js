@@ -133,11 +133,11 @@ useEffect(() => {
     })
   }
   // 分页功能
-  const onPageChange=(page)=>{
-    console.log(page)
+  const onPageChange=(page,pageSize)=>{
+    console.log(page,pageSize)
     setReqData({
       ...reqData,
-      page
+      page,
     })
   }
   return (
@@ -163,7 +163,6 @@ useEffect(() => {
           <Form.Item label="频道" name="channel_id">
             <Select
               placeholder="请选择文章频道"
-            
               style={{ width: 120 }}
             >
             {channels.map((item) =>{
@@ -189,7 +188,7 @@ useEffect(() => {
       <Card title={`根据筛选条件共查询到 ${count} 条结果：`}>
         <Table rowKey="id" columns={columns} dataSource={list} pagination={{
           total: count,
-          pageSize: reqData.per_page,
+          pageSize:reqData.per_page,
           onChange: onPageChange
         }} />
       </Card>

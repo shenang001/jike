@@ -3,12 +3,12 @@ import {
     Input,Upload,Space,Select,
     message} from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import {  useState } from 'react'
-import {createArticleApPI} from '@/apis/articles'
+import {  useEffect, useState } from 'react'
+import {createArticleApPI, getArticleById} from '@/apis/articles'
 // 引入自定义hook函数
 import { useChannel } from '@/hooks /useChannels'
  
@@ -39,6 +39,25 @@ const changeCover =(e)=>{
   console.log(e.target.value)
   setImageType(e.target.value)
 }
+// 对参数操作的hook函数
+const [searchParams] = useSearchParams()
+
+// 根据id查找文章详情
+//  传过来一个id，就get ‘id’
+ const articleId = searchParams.get('id')
+ console.log(articleId,searchParams)
+ const [form] = Form.useForm()
+// 回填数据
+useEffect(()=>{
+ async function getArticlesDetail(){
+   const res = await getArticleById(articleId)
+  //  console.log('gvhghghj',res)
+  // 调用实例方法，回填数据
+  form.setFieldsValue(res.data)
+  }
+  getArticlesDetail()
+},[articleId,form])
+
 
   // 点击提交按钮
   const onFinish = (formValue)=>{
@@ -75,6 +94,7 @@ return (
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 0 }}
           onFinish={onFinish}
+          form={form}
         >
           <Form.Item
             label="标题"

@@ -29,3 +29,9 @@ return request({
     method:'DELETE'
 })
 }
+export function getArticleById(id){
+    return request({
+        url:`/mp/articles/${id}`,
+        method:'GET'
+    })
+}
