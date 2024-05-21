@@ -66,7 +66,7 @@ const getArticlesDetail = async() =>{
     return {url}
   }))
   }
-  getArticlesDetail()
+ articleId &&  getArticlesDetail()
 },[articleId,form])
 
 
@@ -95,7 +95,7 @@ return (
         title={
           <Breadcrumb items={[
             { title: <Link to={'/'}>首页</Link> },
-            { title: '发布文章' },
+            { title: `${articleId? 'bianji' : '发布' }文章` },
           ]}
           />
         }
