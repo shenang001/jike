@@ -43,17 +43,28 @@ const changeCover =(e)=>{
 const [searchParams] = useSearchParams()
 
 // 根据id查找文章详情
-//  传过来一个id，就get ‘id’
+//  传过来一个id，就get ‘id’  
  const articleId = searchParams.get('id')
- console.log(articleId,searchParams)
+ console.log('id是',articleId)
  const [form] = Form.useForm()
+
 // 回填数据
 useEffect(()=>{
- async function getArticlesDetail(){
+const getArticlesDetail = async() =>{
    const res = await getArticleById(articleId)
   //  console.log('gvhghghj',res)
-  // 调用实例方法，回填数据
-  form.setFieldsValue(res.data)
+  // 调用实例方法，1.回填数据
+  form.setFieldsValue({
+    ...res.data,
+    type:res.data.cover.type
+  })
+  // 2.回填封面
+  // 图片类型，单张多张无图
+  setImageType(res.data.cover.type)
+  // 3.回填图片   路径 为{url:url} 并在标签里加入‘fileList’属性
+  setImageList(res.data.cover.images.map(url =>{
+    return {url}
+  }))
   }
   getArticlesDetail()
 },[articleId,form])
@@ -119,6 +130,7 @@ return (
     maxCount={imageType}
     action={'http://geek.itheima.net/v1_0/upload'}
     onChange={onUploadChange}
+    fileList={imageList}
   >
     <div style={{ marginTop: 8 }}>
       <PlusOutlined />
