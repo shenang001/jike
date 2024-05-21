@@ -3,12 +3,12 @@ import {
     Input,Upload,Space,Select,
     message} from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import {  useEffect, useState } from 'react'
-import {createArticleApPI, getArticleById} from '@/apis/articles'
+import {createArticleApPI, getArticleById,updateArticleApPI} from '@/apis/articles'
 // 引入自定义hook函数
 import { useChannel } from '@/hooks /useChannels'
  
@@ -25,6 +25,7 @@ const Publish = ()=>{
   //     fetchChannels()
   //   } ,[])
   const {channels} =  useChannel()
+  const navigate = useNavigate()
   // 封面图片状态信息
   const [imageList, setImageList] = useState([])
   // 点击上传图片
@@ -66,28 +67,42 @@ const getArticlesDetail = async() =>{
     return {url}
   }))
   }
+  // 有id的时候（点击编辑时）才会调用此接口
  articleId &&  getArticlesDetail()
 },[articleId,form])
-
 
   // 点击提交按钮
   const onFinish = (formValue)=>{
     console.log(formValue)
     if(imageType !== imageList.length) return message.warning('请匹配封面数量信息')
     const {title,channel_id,content} = formValue
+
   // 表单数据reqData
     let reqData = {
       title:title,
       content:content,
+      id:articleId,
       cover:{
         type:imageType, //封面模式1或0或3
-        images:imageList.map((item) => item.response.data.url) //得到图片路径
+        images:imageList.map((item) => {
+          // 对编辑时的照片做兼容性处理
+          if(item.response){
+            return item.response.data.url
+          }else{
+            return item.url
+          }
+        }) //得到图片路径
       },
       channel_id:channel_id
     }
-    createArticleApPI(reqData)
-    message.success('发布成功')
-    reqData ={}
+    // 通过id判断是编辑/新增操作
+    if(articleId){
+      updateArticleApPI(reqData)   //调用编辑接口
+    }else{
+      createArticleApPI(reqData)
+    }
+   message.success('发布成功')
+   navigate('/article')
   }
 return (
     <div className="publish">
@@ -95,7 +110,7 @@ return (
         title={
           <Breadcrumb items={[
             { title: <Link to={'/'}>首页</Link> },
-            { title: `${articleId? 'bianji' : '发布' }文章` },
+            { title: `${articleId? '编辑' : '发布' }文章` },
           ]}
           />
         }

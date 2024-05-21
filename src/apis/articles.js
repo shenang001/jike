@@ -13,6 +13,15 @@ export function createArticleApPI(data){
         data:data
     })
 }
+// 编辑文章接口
+export function updateArticleApPI(data){
+    return request({
+        url:`mp/articles/${data.id}?draft=flase`,
+        method:'PUT',
+        data:data
+    })
+    
+}
 // 获取文章列表
 // params 的对象{}参数名和值， axios 源码会把参数和值，拼接在 url? 后面给后台
 export function getArticleListAPI(params){
