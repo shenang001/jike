@@ -23,13 +23,12 @@ request.interceptors.response.use((response) =>{
 return response.data
 },(error) =>{
   // 当状态码超过2XX范围时会返回
-  console.log(error.response.status)
+  console.log(error.response?.status)
   if(error.response.status === 401){
     removeToken()
     router.navigate('/login')
     window.location.reload()
   }
- 
     return Promise.reject(error)
 
 })
